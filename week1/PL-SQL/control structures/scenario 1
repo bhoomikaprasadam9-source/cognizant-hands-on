@@ -1,0 +1,44 @@
+CREATE TABLE Customers (
+    CustomerID NUMBER PRIMARY KEY,
+    CustomerName VARCHAR2(50),
+    Age NUMBER,
+    Balance NUMBER,
+    IsVIP VARCHAR2(5)
+);
+
+CREATE TABLE Loans (
+    LoanID NUMBER PRIMARY KEY,
+    CustomerID NUMBER,
+    InterestRate NUMBER,
+    DueDate DATE
+);
+
+INSERT INTO Customers VALUES (1, 'John', 65, 15000, 'FALSE');
+INSERT INTO Customers VALUES (2, 'Alice', 45, 8000, 'FALSE');
+INSERT INTO Customers VALUES (3, 'Bob', 70, 20000, 'FALSE');
+
+INSERT INTO Loans VALUES (101, 1, 8, SYSDATE + 20);
+INSERT INTO Loans VALUES (102, 2, 10, SYSDATE + 40);
+INSERT INTO Loans VALUES (103, 3, 9, SYSDATE + 10);
+
+COMMIT;
+
+DECLARE
+    CURSOR c_customers IS
+        SELECT CustomerID, Age
+        FROM Customers;
+
+BEGIN
+    FOR cust IN c_customers LOOP
+        IF cust.Age > 60 THEN
+            UPDATE Loans
+            SET InterestRate = InterestRate - 1
+            WHERE CustomerID = cust.CustomerID;
+        END IF;
+    END LOOP;
+
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('Interest rates updated successfully.');
+END;
+/
