@@ -1,0 +1,44 @@
+CREATE TABLE Accounts (
+    AccountID NUMBER PRIMARY KEY,
+    CustomerID NUMBER,
+    AccountType VARCHAR2(20),
+    Balance NUMBER
+);
+
+CREATE TABLE Employees (
+    EmployeeID NUMBER PRIMARY KEY,
+    DepartmentID NUMBER,
+    Salary NUMBER
+);
+
+INSERT INTO Accounts VALUES (101,1,'Savings',10000);
+INSERT INTO Accounts VALUES (102,2,'Savings',15000);
+INSERT INTO Accounts VALUES (103,3,'Current',20000);
+
+COMMIT;
+
+INSERT INTO Employees VALUES (1,101,50000);
+INSERT INTO Employees VALUES (2,101,60000);
+INSERT INTO Employees VALUES (3,102,45000);
+
+COMMIT;
+
+CREATE OR REPLACE PROCEDURE ProcessMonthlyInterest
+AS
+BEGIN
+    UPDATE Accounts
+    SET Balance = Balance + (Balance * 0.01)
+    WHERE AccountType = 'Savings';
+
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('Monthly interest processed successfully.');
+END;
+/
+
+BEGIN
+    ProcessMonthlyInterest;
+END;
+/
+
+SELECT * FROM Accounts;
